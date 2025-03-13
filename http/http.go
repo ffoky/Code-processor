@@ -5,14 +5,15 @@ import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"http_server/storage"
 	"net/http"
 )
 
 type Storage interface {
-	Get(uuid string) (*string, error)
-	Put(key string, value string) error
-	Post(uuid string, result string) error
-	Delete(key string) error
+	Get(uuid uuid.UUID) (*string, error)
+	Put(uuid uuid.UUID, result string, status string) error
+	Post(uuid uuid.UUID, result string, status string) error
+	Delete(uuid uuid.UUID) error
 }
 
 type Server struct {
@@ -40,10 +41,6 @@ func (s *Server) getTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	taskStatus := "in_progress"
-
-	if taskResult != nil {
-		taskStatus = "ready"
-	}
 
 	_, _ = fmt.Fprintln(w, taskStatus)
 
@@ -84,17 +81,20 @@ func (s *Server) putHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to store value", http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusCreated)
 }
 
-func generateUUID() string {
+func generateUUID() uuid.UUID {
 	id := uuid.New()
-	return id.String()
+	return id
+}
+
+func UpdateTaskResult() {
+
 }
 
 func (s *Server) postHandler(w http.ResponseWriter, r *http.Request) {
-	var task map[string]string
+	var task map[uuid.UUID]storage.Task
+
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
@@ -104,7 +104,7 @@ func (s *Server) postHandler(w http.ResponseWriter, r *http.Request) {
 	result := "in_progress"
 	_, _ = fmt.Fprintln(w, responseUUID)
 
-	if err := s.storage.Post(responseUUID, result); err != nil {
+	if err := s.storage.Post(responseUUID, status); err != nil {
 		http.Error(w, "Failed to begin task", http.StatusInternalServerError)
 		return
 	}

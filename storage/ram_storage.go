@@ -2,45 +2,69 @@ package storage
 
 import (
 	"errors"
-	"math/rand"
-	"strconv"
+	"github.com/google/uuid"
+	_ "math/rand"
+	_ "strconv"
 	"time"
 )
 
+type Task struct {
+	status string
+	result string
+}
+
 type RamStorage struct {
-	task map[string]string
+	task map[uuid.UUID]Task
 }
 
 func NewRamStorage() *RamStorage {
 	return &RamStorage{
-		task: make(map[string]string),
+		task: make(map[uuid.UUID]Task),
 	}
 }
 
-func (rs *RamStorage) Get(uuid string) (*string, error) {
-	taskStatusResult, exists := rs.task[uuid]
+func NewTask() Task {
+	task := Task{
+		status: "",
+		result: "",
+	}
+	return task
+}
+
+func (rs *RamStorage) Get(uuid uuid.UUID) (*Task, error) {
+	task, exists := rs.task[uuid]
 	if !exists {
-		return nil, nil
+		return nil, errors.New("task not found")
 	}
-	return &taskStatusResult, nil
+	return &task, nil
 }
 
-func (rs *RamStorage) Put(uuid string, status string) error {
-	rs.task[uuid] = status
+func (rs *RamStorage) Put(uuid uuid.UUID, taskStatus string, taskResult string) error {
+	task := NewTask()
+	if taskStatus != "" {
+		task.status = taskStatus
+	}
+	if taskResult != "" {
+		task.result = taskResult
+	}
+	rs.task[uuid] = task
 	return nil
 }
 
-func (rs *RamStorage) Post(uuid string, taskStatusResult string) error {
+func (rs *RamStorage) Post(uuid uuid.UUID, taskStatus string) error {
 	if _, exists := rs.task[uuid]; exists {
 		return errors.New("task already exists")
 	}
+
 	time.Sleep(15 * time.Second)
-	taskStatusResult = strconv.Itoa(rand.Intn(100))
-	rs.task[uuid] = taskStatusResult
+
+	task := NewTask()
+	task.status = taskStatus
+	rs.task[uuid] = task
 	return nil
 }
 
-func (rs *RamStorage) Delete(uuid string) error {
+func (rs *RamStorage) Delete(uuid uuid.UUID) error {
 	if _, exists := rs.task[uuid]; !exists {
 		return errors.New("uuid not found")
 	}
