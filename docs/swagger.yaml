@@ -1,0 +1,155 @@
+basePath: /
+definitions:
+  types.GetTaskResultHandlerResponse:
+    properties:
+      result:
+        type: string
+    type: object
+  types.GetTaskStatusHandlerResponse:
+    properties:
+      status:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample server.
+  title: My API
+  version: "1.0"
+paths:
+  /result:
+    get:
+      consumes:
+      - application/json
+      description: Get task status by its id
+      parameters:
+      - description: ID of the object
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetTaskStatusHandlerResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Task not found
+          schema:
+            type: string
+      summary: Get task status
+      tags:
+      - object
+  /status:
+    get:
+      consumes:
+      - application/json
+      description: Get task status by its id
+      parameters:
+      - description: ID of the object
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetTaskResultHandlerResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Task not found
+          schema:
+            type: string
+      summary: Get task status
+      tags:
+      - object
+  /task:
+    delete:
+      consumes:
+      - application/json
+      description: Delete task by its id
+      parameters:
+      - description: ID of the object
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Task not found
+          schema:
+            type: string
+      summary: Delete task
+      tags:
+      - object
+    post:
+      consumes:
+      - application/json
+      description: Create new task with the specified id and result
+      parameters:
+      - description: ID of the object
+        in: query
+        name: key,value
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: TaskId
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Create task
+      tags:
+      - task
+    put:
+      consumes:
+      - application/json
+      description: Create or update task with the specified id,  status and result
+      parameters:
+      - description: ID of the object
+        in: query
+        name: id,status,result
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Create or update task
+      tags:
+      - object
+swagger: "2.0"
