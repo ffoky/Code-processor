@@ -1,74 +1,63 @@
 package ram_storage
 
 import (
-	"errors"
 	"github.com/google/uuid"
-	_ "math/rand"
-	_ "strconv"
-	"time"
+	"http_server/domain"
+	"http_server/repository"
 )
 
-type TaskInfo struct {
-	Status string
-	Result string
-}
-
 type Task struct {
-	task map[uuid.UUID]TaskInfo
-}
-
-func NewTaskInfo() TaskInfo {
-	taskInfo := TaskInfo{
-		Status: "",
-		Result: "",
-	}
-	return taskInfo
+	tasks map[uuid.UUID]domain.Task
 }
 
 func NewTask() *Task {
 	return &Task{
-		task: make(map[uuid.UUID]TaskInfo),
+		tasks: make(map[uuid.UUID]domain.Task),
 	}
 }
 
-func (rs *Task) Get(uuid uuid.UUID) (*TaskInfo, error) {
-	task, exists := rs.task[uuid]
+func (rs *Task) Get(id uuid.UUID) (domain.Task, error) {
+	task, exists := rs.tasks[id]
 	if !exists {
-		return nil, errors.New("task not found")
+		return domain.Task{}, repository.NotFound
 	}
-	return &task, nil
+	return task, nil
 }
 
-func (rs *Task) Put(uuid uuid.UUID, taskStatus string, taskResult string) error {
-	task := NewTaskInfo()
-	if taskStatus != "" {
-		task.Status = taskStatus
+func (rs *Task) Put(id uuid.UUID, status string, result string) error {
+	task, exists := rs.tasks[id]
+	if !exists {
+		return repository.NotFound
 	}
-	if taskResult != "" {
-		task.Result = taskResult
+
+	if status != "" {
+		task.Status = status
 	}
-	rs.task[uuid] = task
+	if result != "" {
+		task.Result = result
+	}
+
+	rs.tasks[id] = task
 	return nil
 }
 
-func (rs *Task) Post(uuid uuid.UUID, taskStatus string, taskResult string) error {
-	if _, exists := rs.task[uuid]; exists {
-		return errors.New("task already exists")
+func (rs *Task) Post(id uuid.UUID, status string, result string) error {
+	if _, exists := rs.tasks[id]; exists {
+		return repository.ErrTaskExists
 	}
 
-	time.Sleep(5 * time.Second)
-
-	task := NewTaskInfo()
-	task.Status = taskStatus
-	task.Result = taskResult
-	rs.task[uuid] = task
+	rs.tasks[id] = domain.Task{
+		ID:     id,
+		Status: status,
+		Result: result,
+	}
 	return nil
 }
 
-func (rs *Task) Delete(uuid uuid.UUID) error {
-	if _, exists := rs.task[uuid]; !exists {
-		return errors.New("uuid not found")
+func (rs *Task) Delete(id uuid.UUID) error {
+	if _, exists := rs.tasks[id]; !exists {
+		return repository.NotFound
 	}
-	delete(rs.task, uuid)
+	delete(rs.tasks, id)
 	return nil
 }

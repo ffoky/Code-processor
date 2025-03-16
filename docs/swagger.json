@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a sample server.",
-        "title": "My API",
+        "description": "This is homework server.",
+        "title": "Homework1",
         "contact": {},
         "version": "1.0"
     },
@@ -19,7 +19,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "object"
+                    "task"
                 ],
                 "summary": "Get task status",
                 "parameters": [
@@ -63,7 +63,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "object"
+                    "task"
                 ],
                 "summary": "Get task status",
                 "parameters": [
@@ -107,7 +107,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "object"
+                    "task"
                 ],
                 "summary": "Create or update task",
                 "parameters": [
@@ -179,7 +179,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "object"
+                    "task"
                 ],
                 "summary": "Delete task",
                 "parameters": [

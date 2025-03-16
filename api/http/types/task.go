@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	googleId "github.com/google/uuid"
 	"http_server/repository"
@@ -12,35 +13,21 @@ type GetTaskHandlerRequest struct {
 	Uuid googleId.UUID `json:"id"`
 }
 
-func CreateGetTaskHandlerRequest(r *http.Request) (*GetTaskHandlerRequest, error) {
+func CreateGetTaskHandlerRequest(r *http.Request) (GetTaskHandlerRequest, error) {
 	id := r.URL.Query().Get("id")
 	if id == "" {
-		return nil, fmt.Errorf("missing task id")
+		return GetTaskHandlerRequest{}, fmt.Errorf("missing task id")
 	}
 	taskId, _ := googleId.Parse(id)
-	return &GetTaskHandlerRequest{Uuid: taskId}, nil
+	return GetTaskHandlerRequest{Uuid: taskId}, nil
 }
 
 type GetTaskStatusHandlerResponse struct {
-	TaskStatus *string `json:"status"`
+	TaskStatus string `json:"status"`
 }
 
 type GetTaskResultHandlerResponse struct {
-	TaskResult *string `json:"result"`
-}
-
-type PutTaskHandlerRequest struct {
-	Id     string `json:"id"`
-	Status string `json:"status"`
-	Result string `json:"result"`
-}
-
-func CreatePutTaskHandlerRequest(r *http.Request) (*PutTaskHandlerRequest, error) {
-	var req PutTaskHandlerRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		return nil, fmt.Errorf("error while decoding json: %v", err)
-	}
-	return &req, nil
+	TaskResult string `json:"result"`
 }
 
 type PostTaskHandlerRequest struct {
@@ -73,18 +60,21 @@ func CreateDeleteTaskHandlerRequest(r *http.Request) (*DeleteTaskHandlerRequest,
 }
 
 func ProcessError(w http.ResponseWriter, err error, resp any) {
-	if err == repository.NotFound {
-		http.Error(w, "Key not found", http.StatusNotFound)
-		return
-	} else if err != nil {
-		http.Error(w, "Internal Error", http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+	if err != nil {
+		if errors.Is(err, repository.NotFound) {
+			http.Error(w, "Id not found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Internal Error", http.StatusInternalServerError)
+		}
 		return
 	}
 
 	if resp != nil {
+		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(resp); err != nil {
-			http.Error(w, "Internal Error", http.StatusInternalServerError)
+			http.Error(w, "JSON encoding error", http.StatusInternalServerError)
 		}
+	} else {
+		fmt.Fprintln(w, "Not found")
 	}
 }

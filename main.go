@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/go-chi/chi/v5"
 	httpSwagger "github.com/swaggo/http-swagger"
+	_ "http_server/docs"
 	"http_server/repository/ram_storage"
 	"http_server/usecases/service"
 	"log"
@@ -12,9 +13,9 @@ import (
 	pkgHttp "http_server/pkg/http"
 )
 
-// @title My API
+// @title Homework1
 // @version 1.0
-// @description This is a sample server.
+// @description This is homework server.
 
 // @host localhost:8080
 // @BasePath /

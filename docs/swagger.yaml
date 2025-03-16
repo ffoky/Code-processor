@@ -13,8 +13,8 @@ definitions:
 host: localhost:8080
 info:
   contact: {}
-  description: This is a sample server.
-  title: My API
+  description: This is homework server.
+  title: Homework1
   version: "1.0"
 paths:
   /result:
@@ -45,7 +45,7 @@ paths:
             type: string
       summary: Get task status
       tags:
-      - object
+      - task
   /status:
     get:
       consumes:
@@ -74,7 +74,7 @@ paths:
             type: string
       summary: Get task status
       tags:
-      - object
+      - task
   /task:
     delete:
       consumes:
@@ -103,7 +103,7 @@ paths:
             type: string
       summary: Delete task
       tags:
-      - object
+      - task
     post:
       consumes:
       - application/json
@@ -151,5 +151,5 @@ paths:
             type: string
       summary: Create or update task
       tags:
-      - object
+      - task
 swagger: "2.0"

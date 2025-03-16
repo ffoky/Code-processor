@@ -25,7 +25,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "object"
+                    "task"
                 ],
                 "summary": "Get task status",
                 "parameters": [
@@ -69,7 +69,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "object"
+                    "task"
                 ],
                 "summary": "Get task status",
                 "parameters": [
@@ -113,7 +113,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "object"
+                    "task"
                 ],
                 "summary": "Create or update task",
                 "parameters": [
@@ -185,7 +185,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "object"
+                    "task"
                 ],
                 "summary": "Delete task",
                 "parameters": [
@@ -246,8 +246,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "My API",
-	Description:      "This is a sample server.",
+	Title:            "Homework1",
+	Description:      "This is homework server.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
