@@ -10,6 +10,18 @@ definitions:
       status:
         type: string
     type: object
+  types.PostTaskHandlerRequest:
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+    type: object
+  types.PostTaskHandlerResponse:
+    properties:
+      taskId:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -21,12 +33,37 @@ paths:
     get:
       consumes:
       - application/json
+      description: Get task result by its id
+      parameters:
+      - in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetTaskResultHandlerResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Task not found
+          schema:
+            type: string
+      summary: Get task result
+      tags:
+      - task
+  /status:
+    get:
+      consumes:
+      - application/json
       description: Get task status by its id
       parameters:
-      - description: ID of the object
-        in: query
+      - in: query
         name: id
-        required: true
         type: string
       produces:
       - application/json
@@ -46,45 +83,14 @@ paths:
       summary: Get task status
       tags:
       - task
-  /status:
-    get:
-      consumes:
-      - application/json
-      description: Get task status by its id
-      parameters:
-      - description: ID of the object
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/types.GetTaskResultHandlerResponse'
-        "400":
-          description: Bad request
-          schema:
-            type: string
-        "404":
-          description: Task not found
-          schema:
-            type: string
-      summary: Get task status
-      tags:
-      - task
   /task:
     delete:
       consumes:
       - application/json
       description: Delete task by its id
       parameters:
-      - description: ID of the object
-        in: query
+      - in: query
         name: id
-        required: true
         type: string
       produces:
       - application/json
@@ -109,47 +115,24 @@ paths:
       - application/json
       description: Create new task with the specified id and result
       parameters:
-      - description: ID of the object
-        in: query
-        name: key,value
+      - description: Task creation data
+        in: body
+        name: request
         required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: TaskId
-          schema:
-            type: string
-        "400":
-          description: Bad request
-          schema:
-            type: string
-      summary: Create task
-      tags:
-      - task
-    put:
-      consumes:
-      - application/json
-      description: Create or update task with the specified id,  status and result
-      parameters:
-      - description: ID of the object
-        in: query
-        name: id,status,result
-        required: true
-        type: string
+        schema:
+          $ref: '#/definitions/types.PostTaskHandlerRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/types.PostTaskHandlerResponse'
         "400":
           description: Bad request
           schema:
             type: string
-      summary: Create or update task
+      summary: Create task
       tags:
       - task
 swagger: "2.0"

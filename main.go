@@ -3,14 +3,14 @@ package main
 import (
 	"flag"
 	"github.com/go-chi/chi/v5"
+	"github.com/sirupsen/logrus"
 	httpSwagger "github.com/swaggo/http-swagger"
+	"http_server/api/http"
 	_ "http_server/docs"
+	pkgHttp "http_server/pkg/http"
 	"http_server/repository/ram_storage"
 	"http_server/usecases/service"
-	"log"
-
-	"http_server/api/http"
-	pkgHttp "http_server/pkg/http"
+	_ "log"
 )
 
 // @title Homework1
@@ -30,8 +30,8 @@ func main() {
 	r.Get("/swagger/*", httpSwagger.WrapHandler)
 	taskHandlers.WithTaskHandlers(r)
 
-	log.Printf("Starting server on %s", *addr)
+	logrus.Infof("Starting server on %s", *addr)
 	if err := pkgHttp.CreateAndRunServer(r, *addr); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+		logrus.Fatalf("Failed to start server: %v", err)
 	}
 }

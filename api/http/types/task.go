@@ -4,24 +4,36 @@ import (
 	"encoding/json"
 	"fmt"
 	googleId "github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"net/http"
+	"path"
 )
 
+// GetTaskHandlerRequest represents request for getting task status
+// swagger:parameters getTaskStatus getTaskResult
 type GetTaskHandlerRequest struct {
 	Uuid googleId.UUID `json:"id"`
 }
 
 func CreateGetTaskStatusHandlerRequest(r *http.Request) (GetTaskHandlerRequest, error) {
-	id := r.URL.Query().Get("status/")
-	if id == "" {
-		return GetTaskHandlerRequest{}, fmt.Errorf("missing task id")
+	id := path.Base(r.URL.Path)
+
+	taskId, err := googleId.Parse(id)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"id":     id,
+			"error":  err.Error(),
+			"path":   r.URL.Path,
+			"method": r.Method,
+		}).Error("Failed to parse task ID")
+		return GetTaskHandlerRequest{}, fmt.Errorf("invalid task id format")
 	}
-	taskId, _ := googleId.Parse(id)
+
 	return GetTaskHandlerRequest{Uuid: taskId}, nil
 }
 
 func CreateGetTaskResultHandlerRequest(r *http.Request) (GetTaskHandlerRequest, error) {
-	id := r.URL.Query().Get("result/")
+	id := path.Base(r.URL.Path)
 	if id == "" {
 		return GetTaskHandlerRequest{}, fmt.Errorf("missing task id")
 	}
@@ -29,14 +41,20 @@ func CreateGetTaskResultHandlerRequest(r *http.Request) (GetTaskHandlerRequest, 
 	return GetTaskHandlerRequest{Uuid: taskId}, nil
 }
 
+// GetTaskStatusHandlerResponse represents response with task status
+// swagger:response getTaskStatusResponse
 type GetTaskStatusHandlerResponse struct {
 	TaskStatus string `json:"status"`
 }
 
+// GetTaskResultHandlerResponse represents response with task result
+// swagger:response types.getTaskResultResponse
 type GetTaskResultHandlerResponse struct {
 	TaskResult string `json:"result"`
 }
 
+// PostTaskHandlerRequest represents task post request
+// swagger:param parameters PostHandler
 type PostTaskHandlerRequest struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
@@ -50,10 +68,13 @@ func CreatePostTaskHandlerRequest(r *http.Request) (*PostTaskHandlerRequest, err
 	return &req, nil
 }
 
+// PostTaskHandlerResponse represents response with created task ID
+// swagger:response postTaskResponse
 type PostTaskHandlerResponse struct {
 	TaskId googleId.UUID `json:"taskId"`
 }
 
+// DeleteTaskHandlerRequest represents request for deleting task
 type DeleteTaskHandlerRequest struct {
 	Id string `json:"id"`
 }

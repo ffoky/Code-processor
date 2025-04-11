@@ -25,11 +25,11 @@ func NewHandler(service usecases.Task) *Task {
 // @Tags task
 // @Accept  json
 // @Produce json
-// @Param id query string true "ID of the object"
-// @Success 200 {object} types.GetTaskResultHandlerResponse
-// @Failure 400 {string} string "Bad request"
-// @Failure 404 {string} string "Task not found"
-// @Router /status [get]
+// @Param   request   query  types.GetTaskHandlerRequest  true  "Task ID in UUID format"  example("550e8400-e29b-41d4-a716-446655440000")
+// @Success 200     {object}  types.GetTaskStatusHandlerResponse
+// @Failure 400     {string}  string  "Bad request"
+// @Failure 404     {string}  string  "Task not found"
+// @Router  /status [get]
 func (t *Task) getTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
 	req, err := types.CreateGetTaskStatusHandlerRequest(r)
 	if err != nil {
@@ -42,13 +42,13 @@ func (t *Task) getTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// @Summary Get task status
-// @Description Get task status by its id
+// @Summary Get task result
+// @Description Get task result by its id
 // @Tags task
 // @Accept  json
 // @Produce json
-// @Param id query string true "ID of the object"
-// @Success 200 {object} types.GetTaskStatusHandlerResponse
+// @Param request  query  types.GetTaskHandlerRequest  true  "Task ID in UUID format"  example("550e8400-e29b-41d4-a716-446655440000")
+// @Success 200 {object} types.GetTaskResultHandlerResponse
 // @Failure 400 {string} string "Bad request"
 // @Failure 404 {string} string "Task not found"
 // @Router /result [get]
@@ -69,8 +69,8 @@ func (t *Task) getTaskResultHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags task
 // @Accept  json
 // @Produce json
-// @Param key,value query string true "ID of the object"
-// @Success 200 {string} string "TaskId"
+// @Param request body types.PostTaskHandlerRequest  true  "Task creation data"
+// @Success 200 {object} types.PostTaskHandlerResponse
 // @Failure 400 {string} string "Bad request"
 // @Router /task [post]
 func (t *Task) postHandler(w http.ResponseWriter, r *http.Request) {
@@ -89,7 +89,7 @@ func (t *Task) postHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags task
 // @Accept  json
 // @Produce json
-// @Param id query string true "ID of the object"
+// @Param request query types.DeleteTaskHandlerRequest  true  "Task ID in UUID format"  example("550e8400-e29b-41d4-a716-446655440000")
 // @Success 200 {string} string "Task deleted successfully"
 // @Failure 400 {string} string "Bad request"
 // @Failure 404 {string} string "Task not found"
@@ -112,9 +112,9 @@ func (t *Task) WithTaskHandlers(r chi.Router) {
 		r.Delete("/", t.deleteHandler)
 	})
 	r.Route("/status", func(r chi.Router) {
-		r.Get("/", t.getTaskStatusHandler)
+		r.Get("/{id}", t.getTaskStatusHandler)
 	})
 	r.Route("/result", func(r chi.Router) {
-		r.Get("/", t.getTaskResultHandler)
+		r.Get("/{id}", t.getTaskResultHandler)
 	})
 }

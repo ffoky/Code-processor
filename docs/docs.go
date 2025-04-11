@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/result": {
             "get": {
-                "description": "Get task status by its id",
+                "description": "Get task result by its id",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,21 +27,19 @@ const docTemplate = `{
                 "tags": [
                     "task"
                 ],
-                "summary": "Get task status",
+                "summary": "Get task result",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID of the object",
                         "name": "id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.GetTaskStatusHandlerResponse"
+                            "$ref": "#/definitions/types.GetTaskResultHandlerResponse"
                         }
                     },
                     "400": {
@@ -75,17 +73,15 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID of the object",
                         "name": "id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.GetTaskResultHandlerResponse"
+                            "$ref": "#/definitions/types.GetTaskStatusHandlerResponse"
                         }
                     },
                     "400": {
@@ -104,42 +100,6 @@ const docTemplate = `{
             }
         },
         "/task": {
-            "put": {
-                "description": "Create or update task with the specified id,  status and result",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "task"
-                ],
-                "summary": "Create or update task",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of the object",
-                        "name": "id,status,result",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
             "post": {
                 "description": "Create new task with the specified id and result",
                 "consumes": [
@@ -154,18 +114,20 @@ const docTemplate = `{
                 "summary": "Create task",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "ID of the object",
-                        "name": "key,value",
-                        "in": "query",
-                        "required": true
+                        "description": "Task creation data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.PostTaskHandlerRequest"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "TaskId",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/types.PostTaskHandlerResponse"
                         }
                     },
                     "400": {
@@ -191,10 +153,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID of the object",
                         "name": "id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -233,6 +193,25 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.PostTaskHandlerRequest": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.PostTaskHandlerResponse": {
+            "type": "object",
+            "properties": {
+                "taskId": {
                     "type": "string"
                 }
             }
