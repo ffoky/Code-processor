@@ -31,7 +31,7 @@ func NewHandler(service usecases.Task) *Task {
 // @Failure 404 {string} string "Task not found"
 // @Router /status [get]
 func (t *Task) getTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
-	req, err := types.CreateGetTaskHandlerRequest(r)
+	req, err := types.CreateGetTaskStatusHandlerRequest(r)
 	if err != nil {
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
@@ -53,7 +53,7 @@ func (t *Task) getTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {string} string "Task not found"
 // @Router /result [get]
 func (t *Task) getTaskResultHandler(w http.ResponseWriter, r *http.Request) {
-	req, err := types.CreateGetTaskHandlerRequest(r)
+	req, err := types.CreateGetTaskResultHandlerRequest(r)
 	log.Printf("error: %v", err)
 	if err != nil {
 		http.Error(w, "Bad request", http.StatusBadRequest)

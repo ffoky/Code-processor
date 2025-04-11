@@ -2,10 +2,8 @@ package types
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	googleId "github.com/google/uuid"
-	"http_server/repository"
 	"net/http"
 )
 
@@ -13,8 +11,17 @@ type GetTaskHandlerRequest struct {
 	Uuid googleId.UUID `json:"id"`
 }
 
-func CreateGetTaskHandlerRequest(r *http.Request) (GetTaskHandlerRequest, error) {
-	id := r.URL.Query().Get("id")
+func CreateGetTaskStatusHandlerRequest(r *http.Request) (GetTaskHandlerRequest, error) {
+	id := r.URL.Query().Get("status/")
+	if id == "" {
+		return GetTaskHandlerRequest{}, fmt.Errorf("missing task id")
+	}
+	taskId, _ := googleId.Parse(id)
+	return GetTaskHandlerRequest{Uuid: taskId}, nil
+}
+
+func CreateGetTaskResultHandlerRequest(r *http.Request) (GetTaskHandlerRequest, error) {
+	id := r.URL.Query().Get("result/")
 	if id == "" {
 		return GetTaskHandlerRequest{}, fmt.Errorf("missing task id")
 	}
@@ -57,24 +64,4 @@ func CreateDeleteTaskHandlerRequest(r *http.Request) (*DeleteTaskHandlerRequest,
 		return nil, fmt.Errorf("missing id")
 	}
 	return &DeleteTaskHandlerRequest{Id: id}, nil
-}
-
-func ProcessError(w http.ResponseWriter, err error, resp any) {
-	if err != nil {
-		if errors.Is(err, repository.NotFound) {
-			http.Error(w, "Id not found", http.StatusNotFound)
-		} else {
-			http.Error(w, "Internal Error", http.StatusInternalServerError)
-		}
-		return
-	}
-
-	if resp != nil {
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(resp); err != nil {
-			http.Error(w, "JSON encoding error", http.StatusInternalServerError)
-		}
-	} else {
-		fmt.Fprintln(w, "Not found")
-	}
 }
