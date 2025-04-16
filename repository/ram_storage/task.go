@@ -47,7 +47,7 @@ func (rs *Task) Post(id uuid.UUID, status string, result string) error {
 	}
 
 	rs.tasks[id] = domain.Task{
-		ID:     id,
+		Tid:    id,
 		Status: status,
 		Result: result,
 	}

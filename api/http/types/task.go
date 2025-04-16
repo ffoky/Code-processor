@@ -10,7 +10,7 @@ import (
 )
 
 // GetTaskHandlerRequest represents request for getting task status
-// swagger:parameters getTaskStatus getTaskResult
+// swagger:param parameters GetTaskHandlerRequest
 type GetTaskHandlerRequest struct {
 	Uuid googleId.UUID `json:"id"`
 }
@@ -25,7 +25,7 @@ func CreateGetTaskStatusHandlerRequest(r *http.Request) (GetTaskHandlerRequest, 
 			"error":  err.Error(),
 			"path":   r.URL.Path,
 			"method": r.Method,
-		}).Error("Failed to parse task ID")
+		}).Error("Failed to parse task tid")
 		return GetTaskHandlerRequest{}, fmt.Errorf("invalid task id format")
 	}
 
@@ -68,13 +68,14 @@ func CreatePostTaskHandlerRequest(r *http.Request) (*PostTaskHandlerRequest, err
 	return &req, nil
 }
 
-// PostTaskHandlerResponse represents response with created task ID
+// PostTaskHandlerResponse represents response with created task tid
 // swagger:response postTaskResponse
 type PostTaskHandlerResponse struct {
 	TaskId googleId.UUID `json:"taskId"`
 }
 
 // DeleteTaskHandlerRequest represents request for deleting task
+// swagger:param parameters DeleteTaskHandlerRequest
 type DeleteTaskHandlerRequest struct {
 	Id string `json:"id"`
 }

@@ -20,15 +20,26 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
+
 	addr := flag.String("addr", ":8080", "address for http server")
 
+	sessionProvider := ram_storage.NewSessionProvider()
+	sessionService := service.NewSessionService(
+		sessionProvider,
+		"gosessionid",
+		3600, // 1 hour
+	)
 	taskRepo := ram_storage.NewTask()
 	taskService := service.NewTask(taskRepo)
-	taskHandlers := http.NewHandler(taskService)
+	taskHandlers := http.NewTaskHandler(taskService)
+	userRepo := ram_storage.NewUser()
+	userService := service.NewUser(userRepo, sessionService)
+	userHandlers := http.NewUserHandler(userService)
 
 	r := chi.NewRouter()
 	r.Get("/swagger/*", httpSwagger.WrapHandler)
-	taskHandlers.WithTaskHandlers(r)
+	taskHandlers.WithTaskHandlers(r, sessionService)
+	userHandlers.WithUserHandlers(r)
 
 	logrus.Infof("Starting server on %s", *addr)
 	if err := pkgHttp.CreateAndRunServer(r, *addr); err != nil {

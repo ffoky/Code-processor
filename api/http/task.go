@@ -3,9 +3,11 @@ package http
 import (
 	"github.com/go-chi/chi/v5"
 	googleId "github.com/google/uuid"
+	"http_server/api/http/middleware"
 	"http_server/api/http/types"
 	_ "http_server/repository/ram_storage"
 	"http_server/usecases"
+	"http_server/usecases/service"
 	"log"
 	"net/http"
 )
@@ -15,8 +17,8 @@ type Task struct {
 	service usecases.Task
 }
 
-// NewHandler creates a new instance of Task.
-func NewHandler(service usecases.Task) *Task {
+// NewTaskHandler creates a new instance of Task.
+func NewTaskHandler(service usecases.Task) *Task {
 	return &Task{service: service}
 }
 
@@ -25,11 +27,13 @@ func NewHandler(service usecases.Task) *Task {
 // @Tags task
 // @Accept  json
 // @Produce json
-// @Param   request   query  types.GetTaskHandlerRequest  true  "Task ID in UUID format"  example("550e8400-e29b-41d4-a716-446655440000")
+// @Param id path string true "Task tid" example("550e8400-e29b-41d4-a716-446655440000")
 // @Success 200     {object}  types.GetTaskStatusHandlerResponse
 // @Failure 400     {string}  string  "Bad request"
+// @Failure 401     {string}  string  "Unauthorized"
 // @Failure 404     {string}  string  "Task not found"
-// @Router  /status [get]
+// @Security BearerAuth
+// @Router  /status/{id} [get]
 func (t *Task) getTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
 	req, err := types.CreateGetTaskStatusHandlerRequest(r)
 	if err != nil {
@@ -47,11 +51,13 @@ func (t *Task) getTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags task
 // @Accept  json
 // @Produce json
-// @Param request  query  types.GetTaskHandlerRequest  true  "Task ID in UUID format"  example("550e8400-e29b-41d4-a716-446655440000")
+// @Param id path string true "Task tid" example("550e8400-e29b-41d4-a716-446655440000")
 // @Success 200 {object} types.GetTaskResultHandlerResponse
 // @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "Task not found"
-// @Router /result [get]
+// @Security BearerAuth
+// @Router /result/{id} [get]
 func (t *Task) getTaskResultHandler(w http.ResponseWriter, r *http.Request) {
 	req, err := types.CreateGetTaskResultHandlerRequest(r)
 	log.Printf("error: %v", err)
@@ -72,8 +78,10 @@ func (t *Task) getTaskResultHandler(w http.ResponseWriter, r *http.Request) {
 // @Param request body types.PostTaskHandlerRequest  true  "Task creation data"
 // @Success 200 {object} types.PostTaskHandlerResponse
 // @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
 // @Router /task [post]
-func (t *Task) postHandler(w http.ResponseWriter, r *http.Request) {
+// @Security BearerAuth
+func (t *Task) postTaskHandler(w http.ResponseWriter, r *http.Request) {
 	_, err := types.CreatePostTaskHandlerRequest(r)
 	if err != nil {
 		http.Error(w, "Bad request", http.StatusBadRequest)
@@ -89,11 +97,13 @@ func (t *Task) postHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags task
 // @Accept  json
 // @Produce json
-// @Param request query types.DeleteTaskHandlerRequest  true  "Task ID in UUID format"  example("550e8400-e29b-41d4-a716-446655440000")
+// @Param id query types.DeleteTaskHandlerRequest true "Task tid" example("550e8400-e29b-41d4-a716-446655440000")
 // @Success 200 {string} string "Task deleted successfully"
 // @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "Task not found"
 // @Router /task [delete]
+// @Security BearerAuth
 func (t *Task) deleteHandler(w http.ResponseWriter, r *http.Request) {
 	req, err := types.CreateDeleteTaskHandlerRequest(r)
 	if err != nil {
@@ -106,15 +116,19 @@ func (t *Task) deleteHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // WithTaskHandlers registers task-related HTTP handlers.
-func (t *Task) WithTaskHandlers(r chi.Router) {
+func (t *Task) WithTaskHandlers(r chi.Router, sessionService *service.SessionService) {
+	authMiddleware := middleware.AuthMiddleware(sessionService)
+
 	r.Route("/task", func(r chi.Router) {
-		r.Post("/", t.postHandler)
-		r.Delete("/", t.deleteHandler)
+		r.With(authMiddleware).Post("/", t.postTaskHandler)
+		r.With(authMiddleware).Delete("/", t.deleteHandler)
 	})
+
 	r.Route("/status", func(r chi.Router) {
-		r.Get("/{id}", t.getTaskStatusHandler)
+		r.With(authMiddleware).Get("/{id}", t.getTaskStatusHandler)
 	})
+
 	r.Route("/result", func(r chi.Router) {
-		r.Get("/{id}", t.getTaskResultHandler)
+		r.With(authMiddleware).Get("/{id}", t.getTaskResultHandler)
 	})
 }

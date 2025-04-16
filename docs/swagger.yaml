@@ -22,6 +22,30 @@ definitions:
       taskId:
         type: string
     type: object
+  types.PostUserLoginHandlerRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  types.PostUserLoginHandlerResponse:
+    properties:
+      session-id:
+        type: string
+    type: object
+  types.PostUserRegistrationHandlerRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  types.PostUserRegistrationHandlerResponse:
+    properties:
+      status-ok:
+        type: integer
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -29,14 +53,69 @@ info:
   title: Homework1
   version: "1.0"
 paths:
-  /result:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login user by login and password
+      parameters:
+      - description: user login data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.PostUserLoginHandlerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.PostUserLoginHandlerResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Login user
+      tags:
+      - user
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Create new user with the specified id, login and password
+      parameters:
+      - description: User creation data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.PostUserRegistrationHandlerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.PostUserRegistrationHandlerResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Create User
+      tags:
+      - user
+  /result/{id}:
     get:
       consumes:
       - application/json
       description: Get task result by its id
       parameters:
-      - in: query
+      - description: Task tid
+        example: '"550e8400-e29b-41d4-a716-446655440000"'
+        in: path
         name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -49,21 +128,30 @@ paths:
           description: Bad request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "404":
           description: Task not found
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: Get task result
       tags:
       - task
-  /status:
+  /status/{id}:
     get:
       consumes:
       - application/json
       description: Get task status by its id
       parameters:
-      - in: query
+      - description: Task tid
+        example: '"550e8400-e29b-41d4-a716-446655440000"'
+        in: path
         name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -76,10 +164,16 @@ paths:
           description: Bad request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "404":
           description: Task not found
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: Get task status
       tags:
       - task
@@ -103,10 +197,16 @@ paths:
           description: Bad request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "404":
           description: Task not found
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: Delete task
       tags:
       - task
@@ -132,6 +232,12 @@ paths:
           description: Bad request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
       summary: Create task
       tags:
       - task
