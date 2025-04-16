@@ -15,7 +15,10 @@ import (
 
 // @title Homework1
 // @version 1.0
-// @description This is homework server.
+// @description Homework swagger api, added sessions and auth.
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization: Bearer
 
 // @host localhost:8080
 // @BasePath /

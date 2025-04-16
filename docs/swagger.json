@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is homework server.",
+        "description": "Homework swagger api, added sessions and auth.",
         "title": "Homework1",
         "contact": {},
         "version": "1.0"
@@ -93,7 +93,7 @@
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "Get task result by its id",
@@ -149,7 +149,7 @@
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "Get task status by its id",
@@ -205,7 +205,7 @@
             "post": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "Create new task with the specified id and result",
@@ -254,7 +254,7 @@
             "delete": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "Delete task by its id",
@@ -377,6 +377,13 @@
                     "type": "integer"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization: Bearer",
+            "in": "header"
         }
     }
 }

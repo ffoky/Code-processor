@@ -49,7 +49,7 @@ definitions:
 host: localhost:8080
 info:
   contact: {}
-  description: This is homework server.
+  description: Homework swagger api, added sessions and auth.
   title: Homework1
   version: "1.0"
 paths:
@@ -137,7 +137,7 @@ paths:
           schema:
             type: string
       security:
-      - BearerAuth: []
+      - ApiKeyAuth: []
       summary: Get task result
       tags:
       - task
@@ -173,7 +173,7 @@ paths:
           schema:
             type: string
       security:
-      - BearerAuth: []
+      - ApiKeyAuth: []
       summary: Get task status
       tags:
       - task
@@ -206,7 +206,7 @@ paths:
           schema:
             type: string
       security:
-      - BearerAuth: []
+      - ApiKeyAuth: []
       summary: Delete task
       tags:
       - task
@@ -237,8 +237,13 @@ paths:
           schema:
             type: string
       security:
-      - BearerAuth: []
+      - ApiKeyAuth: []
       summary: Create task
       tags:
       - task
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: 'Authorization: Bearer'
+    type: apiKey
 swagger: "2.0"

@@ -32,7 +32,7 @@ func NewTaskHandler(service usecases.Task) *Task {
 // @Failure 400     {string}  string  "Bad request"
 // @Failure 401     {string}  string  "Unauthorized"
 // @Failure 404     {string}  string  "Task not found"
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Router  /status/{id} [get]
 func (t *Task) getTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
 	req, err := types.CreateGetTaskStatusHandlerRequest(r)
@@ -56,7 +56,7 @@ func (t *Task) getTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {string} string "Bad request"
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "Task not found"
-// @Security BearerAuth
+// @Security ApiKeyAuth
 // @Router /result/{id} [get]
 func (t *Task) getTaskResultHandler(w http.ResponseWriter, r *http.Request) {
 	req, err := types.CreateGetTaskResultHandlerRequest(r)
@@ -80,7 +80,7 @@ func (t *Task) getTaskResultHandler(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {string} string "Bad request"
 // @Failure 401 {string} string "Unauthorized"
 // @Router /task [post]
-// @Security BearerAuth
+// @Security ApiKeyAuth
 func (t *Task) postTaskHandler(w http.ResponseWriter, r *http.Request) {
 	_, err := types.CreatePostTaskHandlerRequest(r)
 	if err != nil {
@@ -103,7 +103,7 @@ func (t *Task) postTaskHandler(w http.ResponseWriter, r *http.Request) {
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "Task not found"
 // @Router /task [delete]
-// @Security BearerAuth
+// @Security ApiKeyAuth
 func (t *Task) deleteHandler(w http.ResponseWriter, r *http.Request) {
 	req, err := types.CreateDeleteTaskHandlerRequest(r)
 	if err != nil {
