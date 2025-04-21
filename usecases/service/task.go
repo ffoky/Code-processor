@@ -25,8 +25,8 @@ func (rs *Task) Get(req types.GetTaskHandlerRequest) (domain.Task, error) {
 	return rs.repo.Get(req.Uuid)
 }
 
-func (rs *Task) Put(uuid googleId.UUID, status string, result string) error {
-	return rs.repo.Put(uuid, status, result)
+func (rs *Task) Put(task domain.Task) error {
+	return rs.repo.Put(task.Tid, task.Status, task.Result)
 }
 
 func (rs *Task) generateUUID() googleId.UUID {
@@ -38,7 +38,8 @@ func (rs *Task) CompleteTask(uuid googleId.UUID) error {
 	time.Sleep(25 * time.Second)
 	taskStatus := "ready"
 	taskResult := strconv.Itoa(rand.Intn(100))
-	if err := rs.Put(uuid, taskStatus, taskResult); err != nil {
+	task := domain.Task{Tid: uuid, Status: taskStatus, Result: taskResult}
+	if err := rs.Put(task); err != nil {
 		return repository.InternalError
 	}
 	return nil

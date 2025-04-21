@@ -4,13 +4,6 @@ import (
 	"sync"
 )
 
-type Session interface {
-	Set(key, value interface{}) error
-	Get(key interface{}) interface{}
-	Delete(key interface{}) error
-	SessionID() string
-}
-
 type SessionProvider interface {
 	SessionInit(sid string) (Session, error)
 	SessionRead(sid string) (Session, error)
@@ -24,4 +17,11 @@ type SessionManager struct {
 	Provider    SessionProvider
 	MaxLifetime int64
 	Secure      bool
+}
+
+type Session interface {
+	Set(key, value interface{}) error
+	Get(key interface{}) interface{}
+	Delete(key interface{}) error
+	SessionID() string
 }

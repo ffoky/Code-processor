@@ -10,7 +10,7 @@ func AuthMiddleware(sessionService *service.SessionService) func(http.Handler) h
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			authHeader := r.Header.Get("Authorization")
-			if authHeader == "" || len(authHeader) < 8 || authHeader[:7] != "Bearer " {
+			if authHeader == "" || len(authHeader) < 8 {
 				http.Error(w, "Unauthorized", http.StatusUnauthorized)
 				return
 			}

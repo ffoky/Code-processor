@@ -76,7 +76,7 @@ func (t *Task) getTaskResultHandler(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce json
 // @Param request body types.PostTaskHandlerRequest  true  "Task creation data"
-// @Success 200 {object} types.PostTaskHandlerResponse
+// @Success 201 {object} types.PostTaskHandlerResponse
 // @Failure 400 {string} string "Bad request"
 // @Failure 401 {string} string "Unauthorized"
 // @Router /task [post]

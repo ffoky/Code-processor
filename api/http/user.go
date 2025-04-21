@@ -36,9 +36,8 @@ func (u *User) postUserRegistrationHandler(w http.ResponseWriter, r *http.Reques
 
 	err = u.service.Post(req.Login, req.Password)
 	if err != nil {
-		types.ProcessError(w, err, &types.PostUserRegistrationHandlerResponse{StatusOK: http.StatusOK})
+		types.ProcessError(w, err, &types.PostUserRegistrationHandlerResponse{StatusOK: http.StatusCreated})
 	}
-
 }
 
 // @Summary Login user

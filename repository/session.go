@@ -1,8 +1,6 @@
 package repository
 
-import (
-	"http_server/domain"
-)
+import "http_server/domain"
 
 type Provider interface {
 	SessionInit(sid string) (domain.Session, error)

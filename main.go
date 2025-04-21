@@ -1,8 +1,9 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"http_server/api/http"
@@ -11,6 +12,7 @@ import (
 	"http_server/repository/ram_storage"
 	"http_server/usecases/service"
 	_ "log"
+	"os"
 )
 
 // @title Homework1
@@ -20,11 +22,23 @@ import (
 // @in header
 // @name Authorization: Bearer
 
-// @host localhost:8080
+// @host 127.0.0.1:8000
 // @BasePath /
 func main() {
 
-	addr := flag.String("addr", ":8080", "address for http server")
+	err := godotenv.Load()
+	if err != nil {
+		logrus.Warn(".env file not found, using system env vars")
+	}
+	ip := os.Getenv("SERVER_ADDR")
+	port := os.Getenv("SERVER_PORT")
+	if ip == "" {
+		ip = "localhost"
+	}
+	if port == "" {
+		port = "8080"
+	}
+	addr := fmt.Sprintf("%s:%s", ip, port)
 
 	sessionProvider := ram_storage.NewSessionProvider()
 	sessionService := service.NewSessionService(
@@ -44,8 +58,8 @@ func main() {
 	taskHandlers.WithTaskHandlers(r, sessionService)
 	userHandlers.WithUserHandlers(r)
 
-	logrus.Infof("Starting server on %s", *addr)
-	if err := pkgHttp.CreateAndRunServer(r, *addr); err != nil {
+	logrus.Infof("Starting server on %s", addr)
+	if err := pkgHttp.CreateAndRunServer(r, addr); err != nil {
 		logrus.Fatalf("Failed to start server: %v", err)
 	}
 }
