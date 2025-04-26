@@ -32,12 +32,6 @@ func main() {
 	}
 	ip := os.Getenv("SERVER_ADDR")
 	port := os.Getenv("SERVER_PORT")
-	if ip == "" {
-		ip = "127.0.0.1"
-	}
-	if port == "" {
-		port = "8000"
-	}
 	addr := fmt.Sprintf("%s:%s", ip, port)
 
 	sessionProvider := ram_storage.NewSessionProvider()
