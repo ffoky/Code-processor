@@ -80,8 +80,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/types.PostUserRegistrationHandlerResponse"
                         }
@@ -360,7 +360,7 @@ const docTemplate = `{
         "types.PostUserLoginHandlerResponse": {
             "type": "object",
             "properties": {
-                "session-id": {
+                "token": {
                     "type": "string"
                 }
             }
@@ -379,7 +379,7 @@ const docTemplate = `{
         "types.PostUserRegistrationHandlerResponse": {
             "type": "object",
             "properties": {
-                "status-ok": {
+                "status-сreated": {
                     "type": "integer"
                 }
             }

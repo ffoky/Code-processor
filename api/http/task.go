@@ -42,7 +42,7 @@ func (t *Task) getTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task, err := t.service.Get(req)
-	types.ProcessError(w, err, types.GetTaskStatusHandlerResponse{TaskStatus: task.Status})
+	types.ProcessError(w, err, types.GetTaskStatusHandlerResponse{TaskStatus: task.Status}, http.StatusCreated)
 
 }
 
@@ -67,7 +67,11 @@ func (t *Task) getTaskResultHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task, err := t.service.Get(req)
-	types.ProcessError(w, err, types.GetTaskResultHandlerResponse{TaskResult: task.Result})
+	if err != nil {
+		http.Error(w, "Error getting task result", http.StatusInternalServerError)
+		return
+	}
+	types.ProcessError(w, err, types.GetTaskResultHandlerResponse{TaskResult: task.Result}, http.StatusOK)
 }
 
 // @Summary Create task
@@ -89,7 +93,7 @@ func (t *Task) postTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responseUUID, err := t.service.Post()
-	types.ProcessError(w, err, &types.PostTaskHandlerResponse{TaskId: responseUUID})
+	types.ProcessError(w, err, &types.PostTaskHandlerResponse{TaskId: responseUUID}, http.StatusCreated)
 }
 
 // @Summary Delete task
@@ -112,7 +116,7 @@ func (t *Task) deleteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	taskId, _ := googleId.Parse(req.Id)
 	err = t.service.Delete(taskId)
-	types.ProcessError(w, err, http.StatusOK)
+	types.ProcessError(w, err, nil, http.StatusOK)
 }
 
 // WithTaskHandlers registers task-related HTTP handlers.

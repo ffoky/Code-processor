@@ -37,9 +37,9 @@ func CreatePostUserLoginHandlerRequest(r *http.Request) (*PostUserLoginHandlerRe
 // PostUserRegistrationHandlerResponse represents response with created user tid
 // swagger:response PostUserRegistrationHandlerResponse
 type PostUserRegistrationHandlerResponse struct {
-	StatusOK int `json:"status-ok"`
+	StatusCreated int `json:"status-сreated"`
 }
 
 type PostUserLoginHandlerResponse struct {
-	SessionID string `json:"session-id"`
+	Token string `json:"token"`
 }

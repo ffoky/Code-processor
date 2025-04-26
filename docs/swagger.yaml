@@ -31,7 +31,7 @@ definitions:
     type: object
   types.PostUserLoginHandlerResponse:
     properties:
-      session-id:
+      token:
         type: string
     type: object
   types.PostUserRegistrationHandlerRequest:
@@ -43,7 +43,7 @@ definitions:
     type: object
   types.PostUserRegistrationHandlerResponse:
     properties:
-      status-ok:
+      status-сreated:
         type: integer
     type: object
 host: 127.0.0.1:8000
@@ -94,8 +94,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/types.PostUserRegistrationHandlerResponse'
         "400":

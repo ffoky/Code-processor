@@ -4,9 +4,12 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/sirupsen/logrus"
 	"http_server/api/http/types"
+	"http_server/repository"
 	"http_server/usecases"
 	"net/http"
 )
+
+//TODO переделать регистрацию и логин, обработать ошибки
 
 // User represents an HTTP handler for managing user.
 type User struct {
@@ -24,7 +27,7 @@ func NewUserHandler(service usecases.User) *User {
 // @Accept  json
 // @Produce json
 // @Param request body types.PostUserRegistrationHandlerRequest  true  "User creation data"
-// @Success 200 {object} types.PostUserRegistrationHandlerResponse
+// @Success 201 {object} types.PostUserRegistrationHandlerResponse
 // @Failure 400 {string} string "Bad request"
 // @Router /register [post]
 func (u *User) postUserRegistrationHandler(w http.ResponseWriter, r *http.Request) {
@@ -36,8 +39,11 @@ func (u *User) postUserRegistrationHandler(w http.ResponseWriter, r *http.Reques
 
 	err = u.service.Post(req.Login, req.Password)
 	if err != nil {
-		types.ProcessError(w, err, &types.PostUserRegistrationHandlerResponse{StatusOK: http.StatusCreated})
+		logrus.WithError(err).Error("user already exists")
+		http.Error(w, "User already exists", http.StatusConflict)
 	}
+	types.ProcessError(w, err, &types.PostUserRegistrationHandlerResponse{StatusCreated: http.StatusCreated}, http.StatusCreated)
+
 }
 
 // @Summary Login user
@@ -60,7 +66,14 @@ func (u *User) postUserLoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sessionId, err := u.service.Login(req.Login, req.Password, w, r)
-	types.ProcessError(w, err, &types.PostUserLoginHandlerResponse{SessionID: sessionId})
+	if err != nil {
+		if err == repository.ErrUserNotFound {
+			logrus.WithError(err).Error("User doesnt exist")
+			http.Error(w, "Not found", http.StatusNotFound)
+			return
+		}
+	}
+	types.ProcessError(w, err, &types.PostUserLoginHandlerResponse{Token: sessionId}, http.StatusOK)
 }
 
 // WithTaskHandlers registers user-related HTTP handlers.

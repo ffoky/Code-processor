@@ -65,6 +65,7 @@ func CreatePostTaskHandlerRequest(r *http.Request) (*PostTaskHandlerRequest, err
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, fmt.Errorf("error while decoding json: %v", err)
 	}
+	logrus.Debug(req)
 	return &req, nil
 }
 

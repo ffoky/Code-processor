@@ -1,4 +1,4 @@
-FROM golang:1.22.3-alpine AS build
+FROM golang:1.23.0-alpine AS build
 
 WORKDIR /build
 
@@ -19,5 +19,6 @@ WORKDIR app
 RUN apk add --no-cache curl
 
 COPY --from=build /build/main ./main
+COPY --from=build /build/.env .env
 
 CMD ["/app/main" ]
