@@ -1,10 +1,12 @@
 package http
 
 import (
+	"errors"
 	"github.com/go-chi/chi/v5"
 	googleId "github.com/google/uuid"
 	"http_server/api/http/middleware"
 	"http_server/api/http/types"
+	"http_server/repository"
 	_ "http_server/repository/ram_storage"
 	"http_server/usecases"
 	"http_server/usecases/service"
@@ -42,7 +44,7 @@ func (t *Task) getTaskStatusHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task, err := t.service.Get(req)
-	types.ProcessError(w, err, types.GetTaskStatusHandlerResponse{TaskStatus: task.Status}, http.StatusCreated)
+	types.ProcessError(w, err, types.GetTaskStatusHandlerResponse{TaskStatus: task.Status}, http.StatusOK)
 
 }
 
@@ -68,7 +70,11 @@ func (t *Task) getTaskResultHandler(w http.ResponseWriter, r *http.Request) {
 
 	task, err := t.service.Get(req)
 	if err != nil {
-		http.Error(w, "Error getting task result", http.StatusInternalServerError)
+		if errors.Is(err, repository.NotFound) {
+			http.Error(w, "Task not found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		}
 		return
 	}
 	types.ProcessError(w, err, types.GetTaskResultHandlerResponse{TaskResult: task.Result}, http.StatusOK)

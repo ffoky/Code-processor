@@ -72,7 +72,7 @@ func CreatePostTaskHandlerRequest(r *http.Request) (*PostTaskHandlerRequest, err
 // PostTaskHandlerResponse represents response with created task tid
 // swagger:response postTaskResponse
 type PostTaskHandlerResponse struct {
-	TaskId googleId.UUID `json:"taskId"`
+	TaskId googleId.UUID `json:"task_id"`
 }
 
 // DeleteTaskHandlerRequest represents request for deleting task
