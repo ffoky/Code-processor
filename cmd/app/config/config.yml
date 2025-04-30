@@ -1,0 +1,6 @@
+http:
+  address: ":8080"
+rabbit_mq:
+  host: "broker"
+  port: 5672
+  queue_name: "rabbitMQueue"
