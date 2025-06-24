@@ -29,7 +29,7 @@
 flowchart LR 
   HTTPServer["HTTP Server"] 
   RabbitMQ["RabbitMQ"] 
-  Processor["Code / Image Processor"]
+  Processor["Code Processor"]
   PostgreSQL["PostgreSQL (Task/User storage)"]
   Storage["Redis (sessions) & Filesystem (results)"]
 
