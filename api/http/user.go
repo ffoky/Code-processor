@@ -40,7 +40,7 @@ func (u *User) postUserRegistrationHandler(w http.ResponseWriter, r *http.Reques
 	err = u.service.Post(req.Login, req.Password)
 	if err != nil {
 		logrus.WithError(err).Error("user already exists")
-		http.Error(w, "User already exists", http.StatusCreated)
+		http.Error(w, "User already exists", http.StatusConflict)
 		return
 	}
 	types.ProcessError(w, err, &types.PostUserRegistrationHandlerResponse{StatusCreated: http.StatusCreated}, http.StatusCreated)
@@ -62,7 +62,7 @@ func (u *User) postUserLoginHandler(w http.ResponseWriter, r *http.Request) {
 	req, err := types.CreatePostUserLoginHandlerRequest(r)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to parse login request")
-		http.Error(w, "Bad request", http.StatusCreated)
+		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
 

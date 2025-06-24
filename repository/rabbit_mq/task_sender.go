@@ -1,8 +1,9 @@
-package repository
+package rabbitMQ
 
 import (
 	"encoding/json"
 	_ "encoding/json"
+	"fmt"
 	"github.com/streadway/amqp"
 	_ "github.com/streadway/amqp"
 	"http_server/domain"
@@ -23,12 +24,12 @@ type RabbitMQSender struct {
 func NewRabbitMQSender(amqpURL, queueName string) (*RabbitMQSender, error) {
 	conn, err := amqp.Dial(amqpURL)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("connecting to rabbitMQ: %w", err) //TODO обработать ошибки,обернуть  в ошибки такого вида
 	}
 
 	ch, err := conn.Channel()
 	if err != nil {
-		return nil, err
+		return nil, err //TODO обработать ошибки,обернуть  в ошибки такого вида
 	}
 	_, err = ch.QueueDeclare(
 		queueName,
@@ -39,7 +40,7 @@ func NewRabbitMQSender(amqpURL, queueName string) (*RabbitMQSender, error) {
 		nil,
 	)
 	if err != nil {
-		return nil, err
+		return nil, err //TODO обработать ошибки,обернуть  в ошибки такого вида
 	}
 	return &RabbitMQSender{
 		connection: conn,
@@ -47,10 +48,11 @@ func NewRabbitMQSender(amqpURL, queueName string) (*RabbitMQSender, error) {
 		queueName:  queueName,
 	}, nil
 }
-func (r *RabbitMQSender) Send(task domain.Task) {
+
+func (r *RabbitMQSender) Send(task domain.Task) error {
 	body, err := json.Marshal(task)
 	if err != nil {
-		log.Fatalf("Failed to marshal task: %v", err)
+		return err
 	}
 
 	err = r.channel.Publish(
@@ -63,10 +65,11 @@ func (r *RabbitMQSender) Send(task domain.Task) {
 			Body:        body,
 		})
 	if err != nil {
-		log.Fatalf("Failed to publish message: %v", err)
+		return err
 	}
 
 	log.Println("Object send to RabbitMQ:", task)
+	return nil
 }
 
 func (r *RabbitMQSender) Close() {

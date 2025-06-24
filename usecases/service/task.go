@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	googleId "github.com/google/uuid"
 	"http_server/api/http/types"
 	"http_server/domain"
@@ -12,12 +13,14 @@ import (
 )
 
 type Task struct {
-	repo repository.Task
+	repo   repository.Task
+	sender repository.ObjectSender
 }
 
-func NewTask(repo repository.Task) *Task {
+func NewTask(repo repository.Task, sender repository.ObjectSender) *Task {
 	return &Task{
-		repo: repo,
+		repo:   repo,
+		sender: sender,
 	}
 }
 
@@ -45,16 +48,20 @@ func (rs *Task) CompleteTask(uuid googleId.UUID) error {
 	return nil
 }
 
-func (rs *Task) Post() (googleId.UUID, error) {
+func (rs *Task) Post() (googleId.UUID, error) { //TODO переписать аргумент как domain.Task
 	uuid := rs.generateUUID()
 	status := "in_progress"
 	result := ""
 	go func() {
 		err := rs.CompleteTask(uuid)
 		if err != nil {
-
+			//TODO обработать ошибку
 		}
 	}()
+	err := rs.sender.Send(domain.Task{Tid: uuid, Status: status, Result: result})
+	if err != nil {
+		return googleId.UUID{}, fmt.Errorf("sending object: %w", err)
+	}
 	return uuid, rs.repo.Post(uuid, status, result)
 }
 

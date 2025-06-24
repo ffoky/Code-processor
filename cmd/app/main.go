@@ -9,8 +9,10 @@ import (
 	"http_server/api/http"
 	_ "http_server/docs"
 	pkgHttp "http_server/pkg/http"
+	rabbitMQ "http_server/repository/rabbit_mq"
 	"http_server/repository/ram_storage"
 	"http_server/usecases/service"
+	"log"
 	_ "log"
 	"os"
 )
@@ -41,8 +43,13 @@ func main() {
 		3600, // 1 hour
 	)
 	taskRepo := ram_storage.NewTask()
-	taskService := service.NewTask(taskRepo)
+	taskSender, err := rabbitMQ.NewRabbitMQSender("amqp://guest:guest@broker:5672	", "queue")
+
+	taskService := service.NewTask(taskRepo, taskSender)
 	taskHandlers := http.NewTaskHandler(taskService)
+	if err != nil {
+		log.Fatalf("failed creating rabbitMQ: %s", err.Error())
+	}
 	userRepo := ram_storage.NewUser()
 	userService := service.NewUser(userRepo, sessionService)
 	userHandlers := http.NewUserHandler(userService)

@@ -10,7 +10,7 @@ COPY . .
 
 RUN apk add --no-cache make
 
-RUN go build main.go
+RUN go build -o app cmd/app/main.go 
 
 FROM alpine AS runner
 
@@ -18,7 +18,8 @@ WORKDIR app
 
 RUN apk add --no-cache curl
 
-COPY --from=build /build/main ./main
+COPY --from=build /build/app ./app
+COPY --from=build /build/cmd/app/config/config.yml ./config.yml
 COPY --from=build /build/.env .env
 
-CMD ["/app/main" ]
+CMD ["/app/app", "--config=/app/config.yml" ]
