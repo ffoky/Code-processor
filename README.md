@@ -41,10 +41,8 @@ flowchart LR
   Processor --> Storage["Redis (sessions) & Filesystem (results)"]
 
   %% Styling
-  classDef core fill:#f4f6fb,stroke:#1976d2,stroke-width:2px;
-  classDef store fill:#e3e8ef,stroke:#1976d2,stroke-width:2px,stroke-dasharray: 2 2;
+  classDef core fill:#e3f2fd,stroke:#1976d2,stroke-width:2px;
   class HTTPServer,RabbitMQ,Processor core;
-  class PostgreSQL,Storage store;
 ```
 
 ## Clean Architecture (обобщённая схема)
