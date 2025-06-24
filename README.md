@@ -26,23 +26,25 @@
 ## Общая архитектура микросервисов
 
 ```mermaid
-flowchart LR
+flowchart LR 
   %% Core components
   HTTPServer["HTTP Server"] 
   RabbitMQ["RabbitMQ"] 
   Processor["Code / Image Processor"]
+  PostgreSQL["PostgreSQL (Task/User storage)"]
+  Storage["Redis (sessions) & Filesystem (results)"]
 
   %% Horizontal connections
   HTTPServer <--> RabbitMQ
   RabbitMQ <--> Processor
 
   %% Vertical dependencies
-  HTTPServer --> PostgreSQL["PostgreSQL (Task/User storage)"]
-  Processor --> Storage["Redis (sessions) & Filesystem (results)"]
+  HTTPServer --> PostgreSQL
+  Processor --> Storage
 
   %% Styling
-  classDef core fill:#e3f2fd,stroke:#1976d2,stroke-width:2px;
-  class HTTPServer,RabbitMQ,Processor core;
+  classDef core fill:#e3e8ef,stroke:#1976d2,stroke-width:2px;
+  class HTTPServer,RabbitMQ,Processor,PostgreSQL,Storage core;
 ```
 
 ## Clean Architecture (обобщённая схема)
