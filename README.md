@@ -58,9 +58,14 @@ flowchart LR
 
   %% Core components
   Repo[Repository]
-  Domain[Domain/Model/Entity]
   Usecase[Usecase/Service]
   Controller[Controller/Delivery]
+
+  %% "Фикс" позиции Domain над Usecase
+  Domain/Model/Entity
+  Domain/Model/Entity --> Usecase
+  Domain/Model/Entity --> Repo
+  Domain/Model/Entity --> Controller
 
   %% Interfaces
   gRPC((gRPC))
@@ -72,22 +77,21 @@ flowchart LR
   RDBMS --> Repo
   NoSQL --> Repo
   Micro --> Repo
-  Domain --> Repo
   Repo --> Usecase
   Usecase --> Controller
-  Domain --> Controller
   Controller --> gRPC
   Controller --> REST
   Controller --> CLI
   Controller --> Web
 
   %% Annotation
-  classDef note fill:#fff8c6,stroke:#aaa,stroke-dasharray: 2 2;
+  classDef note fill:#f7f7f7,color:#666,stroke:#aaa,stroke-dasharray: 2 2;
   Note["Business logic happens here"]:::note
   Usecase --> Note
 
-  %% Styling — только рамка, без заливки!
+  %% Styling
   classDef outlined stroke:#1976d2,stroke-width:2px;
+  classDef dummy fill:transparent,stroke:transparent;
   class RDBMS,NoSQL,Micro,Repo,Domain,Usecase,Controller,gRPC,REST,CLI,Web outlined;
 ```
 
