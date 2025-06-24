@@ -41,8 +41,10 @@ flowchart LR
   Processor --> Storage["Redis (sessions) & Filesystem (results)"]
 
   %% Styling
-  classDef core fill:#e3f2fd,stroke:#1976d2,stroke-width:2px;
+  classDef core fill:#f4f6fb,stroke:#1976d2,stroke-width:2px;
+  classDef store fill:#e3e8ef,stroke:#1976d2,stroke-width:2px,stroke-dasharray: 2 2;
   class HTTPServer,RabbitMQ,Processor core;
+  class PostgreSQL,Storage store;
 ```
 
 ## Clean Architecture (обобщённая схема)
@@ -52,65 +54,49 @@ flowchart LR
 ```mermaid
 flowchart LR
 
-  %% Data sources
+  %% Data sources
+  RDBMS[(RDBMS)]
+  NoSQL[(NoSQL)]
+  Micro[(Microservices)]
 
-  RDBMS[(RDBMS)]
+  %% Core components
+  Repo[Repository]
+  Domain[Domain/Model/Entity]
+  Usecase[Usecase/Service]
+  Controller[Controller/Delivery]
 
-  NoSQL[(NoSQL)]
+  %% Interfaces
+  gRPC((gRPC))
+  REST((REST))
+  CLI[/CLI/]
+  Web[/Web/]
 
-  Micro[(Microservices)]
+  %% Relationships
+  RDBMS --> Repo
+  NoSQL --> Repo
+  Micro --> Repo
+  Domain --> Repo
+  Repo --> Usecase
+  Usecase --> Controller
+  Domain --> Controller
+  Controller --> gRPC
+  Controller --> REST
+  Controller --> CLI
+  Controller --> Web
 
-  %% Core components
+  %% Annotation
+  classDef note fill:#fff8c6,stroke:#aaa,stroke-dasharray: 2 2;
+  Note["Business logic happens here"]:::note
+  Usecase --> Note
 
-  Repo[Repository]
+  %% Styling
+  classDef datasource fill:#e3e8ef,stroke:#1976d2,stroke-width:2px;
+  classDef core fill:#f4f6fb,stroke:#1976d2,stroke-width:2px;
+  classDef interface fill:#e3e8ef,stroke:#1976d2,stroke-width:2px;
 
-  Domain[Domain/Model/Entity]
-
-  Usecase[Usecase/Service]
-
-  Controller[Controller/Delivery]
-
-  %% Interfaces
-
-  gRPC((gRPC))
-
-  REST((REST))
-
-  CLI[/CLI/]
-
-  Web[/Web/]
-
-  %% Relationships
-
-  RDBMS --> Repo
-
-  NoSQL --> Repo
-
-  Micro --> Repo
-
-  Domain --> Repo
-
-  Repo --> Usecase
-
-  Usecase --> Controller
-
-  Domain --> Controller
-
-  Controller --> gRPC
-
-  Controller --> REST
-
-  Controller --> CLI
-
-  Controller --> Web
-
-  %% Annotation
-
-  classDef note fill:#fff8c6,stroke:#aaa,stroke-dasharray: 2 2;
-
-  Note["Business logic happens here"]:::note
-
-  Usecase --> Note
+  class RDBMS,NoSQL,Micro datasource;
+  class Repo,Domain,Usecase,Controller core;
+  class gRPC,REST,CLI,Web interface;
 ```
 
 ## Слои Clean Architecture в моём Go-проекте
@@ -118,81 +104,55 @@ flowchart LR
 ```mermaid
 flowchart LR
 
-  subgraph Domain [Domain Entities]
+  subgraph Domain [Domain Entities]
+    D1[Task]
+    D2[User]
+  end
 
-    D1[Task]
+  subgraph UseCases [Use Cases / Services]
+    U1[TaskService]
+    U2[UserService]
+  end
 
-    D2[User]
+  subgraph Adapters [Interface Adapters]
+    A1[HTTP Handlers]
+    A2[PostgresRepo]
+    A3[RedisRepo]
+    A4[RabbitMQ Client]
+  end
 
-  end
+  subgraph Infra [Frameworks & Drivers]
+    F1(Chi HTTP)
+    F2(PostgreSQL)
+    F3(Redis)
+    F4(RabbitMQ)
+    F5(Docker)
+    F6(Prometheus/Grafana)
+  end
 
-  
+  %% зависимости
+  F1 --> A1
+  F2 --> A2
+  F3 --> A3
+  F4 --> A4
+  A1 --> U1
+  A1 --> U2
+  A2 --> U1
+  A3 --> U2
+  A4 --> U1
+  U1 --> D1
+  U2 --> D2
 
-  subgraph UseCases [Use Cases / Services]
+  %% Стилизация
+  classDef domain fill:#f4f6fb,stroke:#1976d2,stroke-width:2px;
+  classDef usecases fill:#e3e8ef,stroke:#1976d2,stroke-width:2px;
+  classDef adapters fill:#f4f6fb,stroke:#1976d2,stroke-width:2px;
+  classDef infra fill:#e3e8ef,stroke:#1976d2,stroke-width:2px;
 
-    U1[TaskService]
-
-    U2[UserService]
-
-  end
-
-  
-
-  subgraph Adapters [Interface Adapters]
-
-    A1[HTTP Handlers]
-
-    A2[PostgresRepo]
-
-    A3[RedisRepo]
-
-    A4[RabbitMQ Client]
-
-  end
-
-  
-
-  subgraph Infra [Frameworks & Drivers]
-
-    F1(Chi HTTP)
-
-    F2(PostgreSQL)
-
-    F3(Redis)
-
-    F4(RabbitMQ)
-
-    F5(Docker)
-
-    F6(Prometheus/Grafana)
-
-  end
-
-  
-
-  %% зависимости
-
-  F1 --> A1
-
-  F2 --> A2
-
-  F3 --> A3
-
-  F4 --> A4
-
-  A1 --> U1
-
-  A1 --> U2
-
-  A2 --> U1
-
-  A3 --> U2
-
-  A4 --> U1
-
-  U1 --> D1
-
-  U2 --> D2
+  class D1,D2 domain;
+  class U1,U2 usecases;
+  class A1,A2,A3,A4 adapters;
+  class F1,F2,F3,F4,F5,F6 infra;
 ```
 - **HTTP Server** (Go, Chi) — REST API, сессии, Swagger-документация.
 - **RabbitMQ** — брокер сообщений.
