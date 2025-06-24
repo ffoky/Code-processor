@@ -1,4 +1,4 @@
-# Пет-проект на Go, написан по принципам чистой архитектуры, реализован микросервисный подход и работу с брокером сообщений, контейнерами и базами данных. 
+# Пет-проект на Go, написан по принципам чистой архитектуры, реализован микросервисный подход и работа с брокером сообщений, контейнерами и базами данных. 
 
 ---
 ## Содержание
@@ -86,14 +86,9 @@ flowchart LR
   Note["Business logic happens here"]:::note
   Usecase --> Note
 
-  %% Styling
-  classDef datasource fill:#e3e8ef,stroke:#1976d2,stroke-width:2px;
-  classDef core fill:#f4f6fb,stroke:#1976d2,stroke-width:2px;
-  classDef interface fill:#e3e8ef,stroke:#1976d2,stroke-width:2px;
-
-  class RDBMS,NoSQL,Micro datasource;
-  class Repo,Domain,Usecase,Controller core;
-  class gRPC,REST,CLI,Web interface;
+  %% Styling — только рамка, без заливки!
+  classDef outlined stroke:#1976d2,stroke-width:2px;
+  class RDBMS,NoSQL,Micro,Repo,Domain,Usecase,Controller,gRPC,REST,CLI,Web outlined;
 ```
 
 ## Слои Clean Architecture в моём Go-проекте
@@ -140,16 +135,9 @@ flowchart LR
   U1 --> D1
   U2 --> D2
 
-  %% Стилизация
-  classDef domain fill:#f4f6fb,stroke:#1976d2,stroke-width:2px;
-  classDef usecases fill:#e3e8ef,stroke:#1976d2,stroke-width:2px;
-  classDef adapters fill:#f4f6fb,stroke:#1976d2,stroke-width:2px;
-  classDef infra fill:#e3e8ef,stroke:#1976d2,stroke-width:2px;
-
-  class D1,D2 domain;
-  class U1,U2 usecases;
-  class A1,A2,A3,A4 adapters;
-  class F1,F2,F3,F4,F5,F6 infra;
+  %% Только синяя рамка для всех блоков, без fill!
+  classDef outlined stroke:#1976d2,stroke-width:2px;
+  class D1,D2,U1,U2,A1,A2,A3,A4,F1,F2,F3,F4,F5,F6 outlined;
 ```
 - **HTTP Server** (Go, Chi) — REST API, сессии, Swagger-документация.
 - **RabbitMQ** — брокер сообщений.
