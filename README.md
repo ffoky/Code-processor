@@ -27,23 +27,20 @@
 
 ```mermaid
 flowchart LR 
-  %% Core components
   HTTPServer["HTTP Server"] 
   RabbitMQ["RabbitMQ"] 
   Processor["Code / Image Processor"]
   PostgreSQL["PostgreSQL (Task/User storage)"]
   Storage["Redis (sessions) & Filesystem (results)"]
 
-  %% Horizontal connections
   HTTPServer <--> RabbitMQ
   RabbitMQ <--> Processor
 
-  %% Vertical dependencies
   HTTPServer --> PostgreSQL
   Processor --> Storage
 
-  %% Styling
-  classDef core fill:#e3e8ef,stroke:#1976d2,stroke-width:2px;
+  %% Стилизация только рамки (чтобы сохранить адаптивность фона!)
+  classDef core stroke:#1976d2,stroke-width:2px;
   class HTTPServer,RabbitMQ,Processor,PostgreSQL,Storage core;
 ```
 
