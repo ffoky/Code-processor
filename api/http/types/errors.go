@@ -17,6 +17,7 @@ func ProcessError(w http.ResponseWriter, err error, resp any, statusCode int) {
 		} else {
 			http.Error(w, "Internal Error", http.StatusInternalServerError)
 		}
+		logrus.Errorf("Error %v", err)
 		return
 	}
 

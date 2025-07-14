@@ -4,16 +4,12 @@ import (
 	"encoding/json"
 	_ "encoding/json"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	_ "github.com/streadway/amqp"
 	"http_server/domain"
-	"log"
 	_ "log"
 )
-
-type ObjectSender interface {
-	Send(object domain.Task)
-}
 
 type RabbitMQSender struct {
 	connection *amqp.Connection
@@ -24,7 +20,8 @@ type RabbitMQSender struct {
 func NewRabbitMQSender(amqpURL, queueName string) (*RabbitMQSender, error) {
 	conn, err := amqp.Dial(amqpURL)
 	if err != nil {
-		return nil, fmt.Errorf("connecting to rabbitMQ: %w", err) //TODO обработать ошибки,обернуть  в ошибки такого вида
+		logrus.Errorf("Failed to connect to RabbitMQ: %v", err)
+		return nil, fmt.Errorf("connecting to rabbitMQ: %w", err)
 	}
 
 	ch, err := conn.Channel()
@@ -52,6 +49,7 @@ func NewRabbitMQSender(amqpURL, queueName string) (*RabbitMQSender, error) {
 func (r *RabbitMQSender) Send(task domain.Task) error {
 	body, err := json.Marshal(task)
 	if err != nil {
+		logrus.Fatalf("Failed to marshal object: %v", err)
 		return err
 	}
 
@@ -65,10 +63,10 @@ func (r *RabbitMQSender) Send(task domain.Task) error {
 			Body:        body,
 		})
 	if err != nil {
+		logrus.Fatalf("Failed to publish message: %v", err)
 		return err
 	}
-
-	log.Println("Object send to RabbitMQ:", task)
+	logrus.Infof("Object send to RabbitMQ: %v", task)
 	return nil
 }
 

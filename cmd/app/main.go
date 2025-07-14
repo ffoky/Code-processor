@@ -24,7 +24,7 @@ import (
 // @in header
 // @name Authorization: Bearer
 
-// @host 127.0.0.1:8000
+// @host 127.0.0.1:8080
 // @BasePath /
 func main() {
 
@@ -40,16 +40,16 @@ func main() {
 	sessionService := service.NewSessionService(
 		sessionProvider,
 		"gosessionid",
-		3600, // 1 hour
+		3600,
 	)
 	taskRepo := ram_storage.NewTask()
-	taskSender, err := rabbitMQ.NewRabbitMQSender("amqp://guest:guest@broker:5672	", "queue")
-
-	taskService := service.NewTask(taskRepo, taskSender)
-	taskHandlers := http.NewTaskHandler(taskService)
+	taskSender, err := rabbitMQ.NewRabbitMQSender("amqp://guest:guest@broker:5672", "rabbitMQueue")
 	if err != nil {
 		log.Fatalf("failed creating rabbitMQ: %s", err.Error())
 	}
+	taskService := service.NewTask(taskRepo, taskSender)
+	taskHandlers := http.NewTaskHandler(taskService)
+
 	userRepo := ram_storage.NewUser()
 	userService := service.NewUser(userRepo, sessionService)
 	userHandlers := http.NewUserHandler(userService)

@@ -2,10 +2,9 @@ package config
 
 import (
 	"flag"
+	"github.com/ilyakaznacheev/cleanenv"
 	"log"
 	"os"
-
-	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type AppFlags struct {
@@ -44,6 +43,6 @@ type HTTPConfig struct {
 }
 
 type AppConfig struct {
-	HTTPConfig `yaml:"rabbit_mq"`
-	RabbitMQ   `yaml:"http"`
+	HTTPConfig `yaml:"http"`
+	RabbitMQ   `yaml:"rabbit_mq"`
 }

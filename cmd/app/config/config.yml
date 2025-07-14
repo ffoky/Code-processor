@@ -1,5 +1,5 @@
 http:
-  address: ":8080"
+  address: "0.0.0.0:8080"
 rabbit_mq:
   host: "broker"
   port: 5672
