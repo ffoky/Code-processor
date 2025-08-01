@@ -1,4 +1,4 @@
-# Пет-проект на Go, запускающий код пользователя в изолированной Docker среде, написан по принципам чистой архитектуры, реализован микросервисный подход и работа с брокером сообщений, контейнерами и базами данных. 
+# Code-processor - раннер кода на Go
 
 ---
 ## Содержание
@@ -10,18 +10,29 @@
 - [Инфраструктура](#инфраструктура)  
 - [Мониторинг](#мониторинг)  
 
-# Технологии
-- **Go** (1.21), **Chi**, **Swaggo**
-- **Docker**, **Docker Compose**
-- **RabbitMQ**
-- **PostgreSQL**, **Redis**
-- **Prometheus**, **Grafana**
-- **GitHub Actions**, **Makefile**
+## Технологии
+
+![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go&logoColor=white)
+![Chi](https://img.shields.io/badge/Chi-5.0+-000000?logo=go&logoColor=white)
+![Swaggo](https://img.shields.io/badge/Swaggo-1.8+-34ABE0?logo=swagger&logoColor=white)
+
+![Docker](https://img.shields.io/badge/Docker-24.0+-2496ED?logo=docker&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/Docker_Compose-2.23+-2496ED?logo=docker&logoColor=white)
+
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3.12+-FF6600?logo=rabbitmq&logoColor=white)
+
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-4169E1?logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-7.0+-DC382D?logo=redis&logoColor=white)
+
+![Grafana](https://img.shields.io/badge/Grafana-10.1+-F46800?logo=grafana&logoColor=white)
+
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-3.0+-2088FF?logo=github-actions&logoColor=white)
+![Makefile](https://img.shields.io/badge/Makefile-GNU+-000000?logo=gnu&logoColor=white)
 
 
-# Архитектура
+## Архитектура
 
-## Общая архитектура микросервисов
+### Общая архитектура микросервисов
 
 ```mermaid
 flowchart LR 
