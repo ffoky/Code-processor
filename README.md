@@ -13,7 +13,7 @@
 ## Технологии
 
 ![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go&logoColor=white)
-![Chi](https://img.shields.io/badge/Chi-5.0+-000000?logo=go&logoColor=white)
+![Chi](https://img.shields.io/badge/Chi-5.0+-000000?logo=go&logoColor=white) 
 ![Swaggo](https://img.shields.io/badge/Swaggo-1.8+-34ABE0?logo=swagger&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-24.0+-2496ED?logo=docker&logoColor=white)
 ![Docker Compose](https://img.shields.io/badge/Docker_Compose-2.23+-2496ED?logo=docker&logoColor=white)
@@ -23,6 +23,7 @@
 ![Grafana](https://img.shields.io/badge/Grafana-10.1+-F46800?logo=grafana&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-3.0+-2088FF?logo=github-actions&logoColor=white)
 ![Makefile](https://img.shields.io/badge/Makefile-GNU+-000000?logo=gnu&logoColor=white)
+
 
 ## Архитектура
 
